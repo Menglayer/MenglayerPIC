@@ -555,7 +555,7 @@
 
       // 水印尺寸：相对于短边的一定比例
       const minSide = Math.min(currentImage.width, currentImage.height);
-      const watermarkTargetSize = minSide * 0.35; // 水印占短边约 35%
+      const watermarkTargetSize = minSide * 0.70; // 水印占短边约 70% (较之前放大2倍)
       const ratio = watermarkImg.width / watermarkImg.height;
 
       let wmWidth, wmHeight;
@@ -573,9 +573,9 @@
       const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
       const customText = watermarkTextInput.value;
-      const textHeight = customText ? minSide * 0.028 : 0; // 文字高度比例（已缩小约三个字号）
-      // 给一个负间距，让字体向上提一点，紧贴水印
-      const textSpacing = customText ? -minSide * 0.08 : 0;
+      const textHeight = customText ? minSide * 0.056 : 0; // 文字高度比例（较之前放大2倍）
+      // 给一个负间距，让字体向上提一点，紧贴水印（较之前放大2倍）
+      const textSpacing = customText ? -minSide * 0.16 : 0;
 
       const totalHeight = wmHeight + textSpacing + textHeight;
 

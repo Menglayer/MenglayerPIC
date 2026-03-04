@@ -573,9 +573,9 @@
       const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
       const customText = watermarkTextInput.value;
-      const textHeight = customText ? minSide * 0.04 : 0; // 文字高度比例
+      const textHeight = customText ? minSide * 0.028 : 0; // 文字高度比例（已缩小约三个字号）
       // 给一个负间距，让字体向上提一点，紧贴水印
-      const textSpacing = customText ? -minSide * 0.10 : 0;
+      const textSpacing = customText ? -minSide * 0.08 : 0;
 
       const totalHeight = wmHeight + textSpacing + textHeight;
 

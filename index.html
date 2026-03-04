@@ -6,64 +6,217 @@
   <title>萌芽水印</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --secondary: #ec4899;
+      --surface: rgba(255, 255, 255, 0.85);
+      --border: rgba(255, 255, 255, 0.4);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f7fa;
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
       margin: 0;
-      padding: 24px;
+      padding: 40px 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #333;
+      color: var(--text-main);
+      box-sizing: border-box;
+    }
+
+    /* Ambient animated background shapes */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      z-index: -1;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body::before {
+      background: #8ec5fc;
+      top: -10%;
+      left: -10%;
+    }
+
+    body::after {
+      background: #e0c3fc;
+      bottom: -10%;
+      right: -10%;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(10%, 15%) scale(1.1);
+      }
     }
 
     .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      padding: 24px 24px 32px;
-      max-width: 900px;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      max-width: 850px;
       width: 100%;
+      box-sizing: border-box;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     h1 {
-      margin: 0 0 16px;
-      font-size: 22px;
+      margin: 0 0 32px;
+      font-size: 32px;
+      font-weight: 700;
       text-align: center;
-      color: #2b3a42;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
     }
 
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px 16px;
+      gap: 20px;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
+      margin-bottom: 32px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.7);
+      padding: 14px 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .control-item:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .control-item span.label-text {
+      color: var(--text-muted);
+      font-weight: 600;
       font-size: 14px;
     }
 
-    .controls label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #555;
+    /* Custom file input */
+    input[type="file"] {
+      color: var(--text-main);
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    /* 水印位置选择器 */
+    input[type="file"]::file-selector-button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-right: 12px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Range Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 130px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover,
+    input[type="range"]::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+      background: var(--primary);
+    }
+
+    #opacityLabel {
+      min-width: 48px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    /* watermark position */
     .position-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #555;
+      margin: 0;
     }
 
     .position-grid {
       display: grid;
-      grid-template-columns: repeat(3, 28px);
-      grid-template-rows: repeat(3, 28px);
-      gap: 3px;
+      grid-template-columns: repeat(3, 30px);
+      grid-template-rows: repeat(3, 30px);
+      gap: 4px;
     }
 
     .position-grid input[type="radio"] {
@@ -71,89 +224,166 @@
     }
 
     .position-grid label {
-      width: 28px;
-      height: 28px;
-      border-radius: 5px;
-      border: 2px solid #dce4ea;
-      background: #f0f4f7;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: #f1f5f9;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
-      color: #999;
-      transition: all 0.15s ease;
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
+      box-sizing: border-box;
     }
 
     .position-grid label:hover {
-      border-color: #98c5d2;
-      background: #e8f4f8;
+      background: #e2e8f0;
+      color: var(--text-main);
+      transform: scale(1.1);
     }
 
     .position-grid input[type="radio"]:checked+label {
-      border-color: #5da4c1;
-      background: linear-gradient(135deg, #98c5d2, #5da4c1);
-      color: #fff;
+      border-color: var(--primary);
+      background: #eef2ff;
+      color: var(--primary);
       font-weight: 700;
-      box-shadow: 0 2px 8px rgba(93, 164, 193, 0.35);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      transform: scale(1.15);
+      z-index: 1;
     }
 
-    /* 隐藏不需要的网格单元 */
     .position-grid .empty-cell {
       visibility: hidden;
     }
 
-    input[type="file"] {
-      font-size: 14px;
-    }
-
-    input[type="range"] {
-      width: 160px;
-    }
-
-    button {
+    button#downloadBtn {
       cursor: pointer;
-      padding: 8px 18px;
-      border-radius: 999px;
+      padding: 16px 32px;
+      border-radius: 99px;
       border: none;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 16px;
+      font-family: inherit;
+      font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg, #98c5d2, #5da4c1);
-      box-shadow: 0 6px 16px rgba(93, 164, 193, 0.35);
-      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.08s ease;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    button#downloadBtn:disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
       box-shadow: none;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
-    button:not(:disabled):hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(93, 164, 193, 0.4);
+    button#downloadBtn:not(:disabled):hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px rgba(79, 70, 229, 0.4);
+      background: linear-gradient(135deg, var(--primary-hover) 0%, #db2777 100%);
+    }
+
+    button#downloadBtn:not(:disabled):active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
 
     .preview-wrapper {
-      margin-top: 20px;
+      margin-top: 16px;
       display: flex;
       justify-content: center;
+      border-radius: 20px;
+      overflow: hidden;
+      background: repeating-conic-gradient(#f8fafc 0% 25%, #fff 0% 50%) 50% / 24px 24px;
+      border: 3px dashed #cbd5e1;
+      min-height: 240px;
+      align-items: center;
+      position: relative;
+      transition: all 0.3s ease;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .preview-wrapper:hover {
+      border-color: #94a3b8;
+      background-size: 28px 28px;
+    }
+
+    .preview-wrapper::before {
+      content: '🖼️ 请选择一张图片';
+      position: absolute;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 1px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .preview-wrapper.has-image::before {
+      opacity: 0;
     }
 
     canvas {
       max-width: 100%;
       height: auto;
-      border-radius: 10px;
-      background: #f0f4f7;
+      border-radius: 12px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    canvas.show {
+      opacity: 1;
     }
 
     .tip {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #777;
+      margin-top: 32px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-muted);
       text-align: center;
+      background: rgba(241, 245, 249, 0.7);
+      padding: 16px 24px;
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .tip strong {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 24px 20px;
+        border-radius: 20px;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-item {
+        justify-content: space-between;
+      }
+
+      button#downloadBtn {
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -163,19 +393,19 @@
     <h1>🌱 萌芽水印</h1>
 
     <div class="controls">
-      <label>
-        选择图片：
+      <label class="control-item">
+        <span class="label-text">📸 选择图片：</span>
         <input id="fileInput" type="file" accept="image/*" />
       </label>
 
-      <label>
-        水印透明度：
+      <label class="control-item">
+        <span class="label-text">✨ 水印透明度：</span>
         <input id="opacityRange" type="range" min="0" max="100" value="80" />
         <span id="opacityLabel">80%</span>
       </label>
 
-      <div class="position-group">
-        <span>水印位置：</span>
+      <div class="control-item position-group">
+        <span class="label-text">🎯 水印位置：</span>
         <div class="position-grid">
           <input type="radio" name="wmPos" id="pos-tl" value="top-left" />
           <label for="pos-tl" title="左上">↖</label>
@@ -201,17 +431,27 @@
           <label for="pos-br" title="右下">↘</label>
         </div>
       </div>
-
-      <button id="downloadBtn" disabled>下载处理后的图片</button>
     </div>
 
-    <div class="preview-wrapper">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <button id="downloadBtn" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        下载处理后的图片
+      </button>
+    </div>
+
+    <div class="preview-wrapper" id="previewWrapper">
       <canvas id="canvas"></canvas>
     </div>
 
     <div class="tip">
-      - 自动加上 <span style="color:#98c5d2;font-weight:600;">#98c5d2</span> 边框
-      - 水印可选择位置（左上 / 右上 / 中间 / 左下 / 右下），默认居中，大小随原图自适应，可调节透明度
+      👉 自动加上 <strong>#98c5d2</strong> 轻盈边框<br>
+      👉 水印支持多位置选择（默认居中），大小自适应，透明度丝滑调节
     </div>
   </div>
 
@@ -220,6 +460,7 @@
     const opacityRange = document.getElementById("opacityRange");
     const opacityLabel = document.getElementById("opacityLabel");
     const downloadBtn = document.getElementById("downloadBtn");
+    const previewWrapper = document.getElementById("previewWrapper");
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -337,6 +578,8 @@
           if (watermarkLoaded) {
             drawImageWithWatermark();
             downloadBtn.disabled = false;
+            previewWrapper.classList.add('has-image');
+            canvas.classList.add('show');
           }
         };
         img.src = event.target.result;

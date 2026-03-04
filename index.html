@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
-  <title>图片加边框 + 图片水印</title>
+  <title>萌芽水印</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -47,6 +49,59 @@
       align-items: center;
       gap: 6px;
       color: #555;
+    }
+
+    /* 水印位置选择器 */
+    .position-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #555;
+    }
+
+    .position-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 28px);
+      grid-template-rows: repeat(3, 28px);
+      gap: 3px;
+    }
+
+    .position-grid input[type="radio"] {
+      display: none;
+    }
+
+    .position-grid label {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      border: 2px solid #dce4ea;
+      background: #f0f4f7;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #999;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .position-grid label:hover {
+      border-color: #98c5d2;
+      background: #e8f4f8;
+    }
+
+    .position-grid input[type="radio"]:checked+label {
+      border-color: #5da4c1;
+      background: linear-gradient(135deg, #98c5d2, #5da4c1);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(93, 164, 193, 0.35);
+    }
+
+    /* 隐藏不需要的网格单元 */
+    .position-grid .empty-cell {
+      visibility: hidden;
     }
 
     input[type="file"] {
@@ -102,9 +157,10 @@
     }
   </style>
 </head>
+
 <body>
   <div class="card">
-    <h1>图片加边框 + 固定图片水印</h1>
+    <h1>🌱 萌芽水印</h1>
 
     <div class="controls">
       <label>
@@ -118,6 +174,34 @@
         <span id="opacityLabel">80%</span>
       </label>
 
+      <div class="position-group">
+        <span>水印位置：</span>
+        <div class="position-grid">
+          <input type="radio" name="wmPos" id="pos-tl" value="top-left" />
+          <label for="pos-tl" title="左上">↖</label>
+
+          <span class="empty-cell"></span>
+
+          <input type="radio" name="wmPos" id="pos-tr" value="top-right" />
+          <label for="pos-tr" title="右上">↗</label>
+
+          <span class="empty-cell"></span>
+
+          <input type="radio" name="wmPos" id="pos-center" value="center" checked />
+          <label for="pos-center" title="中间">✦</label>
+
+          <span class="empty-cell"></span>
+
+          <input type="radio" name="wmPos" id="pos-bl" value="bottom-left" />
+          <label for="pos-bl" title="左下">↙</label>
+
+          <span class="empty-cell"></span>
+
+          <input type="radio" name="wmPos" id="pos-br" value="bottom-right" />
+          <label for="pos-br" title="右下">↘</label>
+        </div>
+      </div>
+
       <button id="downloadBtn" disabled>下载处理后的图片</button>
     </div>
 
@@ -126,8 +210,8 @@
     </div>
 
     <div class="tip">
-      - 自动加上 <span style="color:#98c5d2;font-weight:600;">#98c5d2</span> 边框  
-      - 固定水印图片居中显示，大小随原图自适应，可调节透明度
+      - 自动加上 <span style="color:#98c5d2;font-weight:600;">#98c5d2</span> 边框
+      - 水印可选择位置（左上 / 右上 / 中间 / 左下 / 右下），默认居中，大小随原图自适应，可调节透明度
     </div>
   </div>
 
@@ -206,16 +290,37 @@
         wmWidth = watermarkTargetSize * ratio;
       }
 
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      // 根据选择的位置计算坐标
+      const posRadio = document.querySelector('input[name="wmPos"]:checked');
+      const position = posRadio ? posRadio.value : 'center';
+      const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
-      ctx.drawImage(
-        watermarkImg,
-        centerX - wmWidth / 2,
-        centerY - wmHeight / 2,
-        wmWidth,
-        wmHeight
-      );
+      let wmX, wmY;
+      switch (position) {
+        case 'top-left':
+          wmX = margin;
+          wmY = margin;
+          break;
+        case 'top-right':
+          wmX = canvas.width - wmWidth - margin;
+          wmY = margin;
+          break;
+        case 'bottom-left':
+          wmX = margin;
+          wmY = canvas.height - wmHeight - margin;
+          break;
+        case 'bottom-right':
+          wmX = canvas.width - wmWidth - margin;
+          wmY = canvas.height - wmHeight - margin;
+          break;
+        case 'center':
+        default:
+          wmX = canvas.width / 2 - wmWidth / 2;
+          wmY = canvas.height / 2 - wmHeight / 2;
+          break;
+      }
+
+      ctx.drawImage(watermarkImg, wmX, wmY, wmWidth, wmHeight);
 
       ctx.restore();
     }
@@ -246,6 +351,15 @@
       }
     });
 
+    // 监听水印位置变化
+    document.querySelectorAll('input[name="wmPos"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (currentImage && watermarkLoaded) {
+          drawImageWithWatermark();
+        }
+      });
+    });
+
     downloadBtn.addEventListener("click", () => {
       if (!currentImage || !watermarkLoaded) return;
 
@@ -256,4 +370,5 @@
     });
   </script>
 </body>
+
 </html>

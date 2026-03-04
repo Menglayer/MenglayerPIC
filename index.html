@@ -9,14 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --secondary: #ec4899;
+      --primary: #98c5d2;
+      --primary-hover: #7bafbe;
+      --secondary: #b8dbe5;
       --surface: rgba(255, 255, 255, 0.85);
       --border: rgba(255, 255, 255, 0.4);
       --text-main: #1e293b;
       --text-muted: #64748b;
-      --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      --bg-gradient: linear-gradient(135deg, #e6f2f5 0%, #c4e4ed 100%);
     }
 
     body {
@@ -47,13 +47,13 @@
     }
 
     body::before {
-      background: #8ec5fc;
+      background: #c4e4ed;
       top: -10%;
       left: -10%;
     }
 
     body::after {
-      background: #e0c3fc;
+      background: #e6f2f5;
       bottom: -10%;
       right: -10%;
       animation-delay: -10s;
@@ -158,12 +158,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
       margin-right: 12px;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 12px rgba(152, 197, 210, 0.3);
     }
 
     input[type="file"]::file-selector-button:hover {
       background: var(--primary-hover);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 6px 16px rgba(152, 197, 210, 0.4);
       transform: translateY(-1px);
     }
 
@@ -188,7 +188,7 @@
       background: white;
       border: 2px solid var(--primary);
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 2px 8px rgba(152, 197, 210, 0.4);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -205,6 +205,30 @@
       font-weight: 700;
       color: var(--primary);
       font-size: 16px;
+    }
+
+    /* Text Input */
+    .text-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      width: 180px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(152, 197, 210, 0.2);
     }
 
     /* watermark position */
@@ -251,7 +275,7 @@
       background: #eef2ff;
       color: var(--primary);
       font-weight: 700;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      box-shadow: 0 4px 12px rgba(152, 197, 210, 0.2);
       transform: scale(1.15);
       z-index: 1;
     }
@@ -269,8 +293,8 @@
       font-family: inherit;
       font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+      box-shadow: 0 10px 24px rgba(152, 197, 210, 0.3);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       letter-spacing: 0.5px;
       display: inline-flex;
@@ -288,13 +312,13 @@
 
     button#downloadBtn:not(:disabled):hover {
       transform: translateY(-3px);
-      box-shadow: 0 16px 32px rgba(79, 70, 229, 0.4);
-      background: linear-gradient(135deg, var(--primary-hover) 0%, #db2777 100%);
+      box-shadow: 0 16px 32px rgba(152, 197, 210, 0.4);
+      background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
     }
 
     button#downloadBtn:not(:disabled):active {
       transform: translateY(1px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 12px rgba(152, 197, 210, 0.3);
     }
 
     .preview-wrapper {
@@ -400,8 +424,13 @@
 
       <label class="control-item">
         <span class="label-text">✨ 水印透明度：</span>
-        <input id="opacityRange" type="range" min="0" max="100" value="80" />
-        <span id="opacityLabel">80%</span>
+        <input id="opacityRange" type="range" min="0" max="100" value="60" />
+        <span id="opacityLabel">60%</span>
+      </label>
+
+      <label class="control-item text-input-wrapper">
+        <span class="label-text">✍️ 水印下方文字：</span>
+        <input id="watermarkText" type="text" value="By 陈小萌 & 萌芽社区" placeholder="留空不显示文字" />
       </label>
 
       <div class="control-item position-group">
@@ -459,6 +488,7 @@
     const fileInput = document.getElementById("fileInput");
     const opacityRange = document.getElementById("opacityRange");
     const opacityLabel = document.getElementById("opacityLabel");
+    const watermarkTextInput = document.getElementById("watermarkText");
     const downloadBtn = document.getElementById("downloadBtn");
     const previewWrapper = document.getElementById("previewWrapper");
     const canvas = document.getElementById("canvas");
@@ -536,6 +566,12 @@
       const position = posRadio ? posRadio.value : 'center';
       const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
+      const customText = watermarkTextInput.value;
+      const textHeight = customText ? minSide * 0.04 : 0; // 文字高度比例
+      const textSpacing = customText ? minSide * 0.02 : 0; // 文字和水印的间距
+
+      const totalHeight = wmHeight + textSpacing + textHeight;
+
       let wmX, wmY;
       switch (position) {
         case 'top-left':
@@ -548,20 +584,30 @@
           break;
         case 'bottom-left':
           wmX = margin;
-          wmY = canvas.height - wmHeight - margin;
+          wmY = canvas.height - totalHeight - margin;
           break;
         case 'bottom-right':
           wmX = canvas.width - wmWidth - margin;
-          wmY = canvas.height - wmHeight - margin;
+          wmY = canvas.height - totalHeight - margin;
           break;
         case 'center':
         default:
           wmX = canvas.width / 2 - wmWidth / 2;
-          wmY = canvas.height / 2 - wmHeight / 2;
+          wmY = canvas.height / 2 - totalHeight / 2;
           break;
       }
 
+      // Draw Image Watermark
       ctx.drawImage(watermarkImg, wmX, wmY, wmWidth, wmHeight);
+
+      // Draw Text Watermark if exists
+      if (customText) {
+        ctx.font = `600 ${textHeight}px Outfit, system-ui, sans-serif`;
+        ctx.fillStyle = '#98c5d2';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(customText, wmX + wmWidth / 2, wmY + wmHeight + textSpacing);
+      }
 
       ctx.restore();
     }
@@ -589,6 +635,12 @@
 
     opacityRange.addEventListener("input", () => {
       opacityLabel.textContent = `${opacityRange.value}%`;
+      if (currentImage && watermarkLoaded) {
+        drawImageWithWatermark();
+      }
+    });
+
+    watermarkTextInput.addEventListener("input", () => {
       if (currentImage && watermarkLoaded) {
         drawImageWithWatermark();
       }

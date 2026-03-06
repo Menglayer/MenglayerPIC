@@ -447,13 +447,6 @@
           style="width: 100%; box-sizing: border-box;" />
       </div>
 
-      <div class="control-item">
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-          <span class="label-text">🔤 文字大小：</span>
-          <span id="textSizeLabel" style="color: var(--primary); font-weight: 700; font-size: 16px;">50%</span>
-        </div>
-        <input id="textSizeRange" type="range" min="0" max="100" value="50" style="width: 100%; margin-top: 8px;" />
-      </div>
 
       <div class="control-item" style="align-items: center;">
         <span class="label-text" style="align-self: flex-start;">🎯 水印位置：</span>
@@ -513,8 +506,7 @@
     const sizeRange = document.getElementById("sizeRange");
     const sizeLabel = document.getElementById("sizeLabel");
     const watermarkTextInput = document.getElementById("watermarkText");
-    const textSizeRange = document.getElementById("textSizeRange");
-    const textSizeLabel = document.getElementById("textSizeLabel");
+
     const downloadBtn = document.getElementById("downloadBtn");
     const previewWrapper = document.getElementById("previewWrapper");
     const canvas = document.getElementById("canvas");
@@ -594,8 +586,7 @@
       const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
       const customText = watermarkTextInput.value;
-      const textSizePercent = Number(textSizeRange.value) / 100;
-      const textHeight = customText ? minSide * 0.084 * textSizePercent : 0; // 文字高度比例，受文字大小滑块控制
+      const textHeight = customText ? minSide * 0.084 * sizePercent : 0; // 文字大小跟随水印大小
       // 文字与水印之间的间距
       const textSpacing = customText ? minSide * 0.02 : 0;
 
@@ -700,12 +691,7 @@
       }
     });
 
-    textSizeRange.addEventListener("input", () => {
-      textSizeLabel.textContent = `${textSizeRange.value}%`;
-      if (currentImage && watermarkLoaded) {
-        drawImageWithWatermark();
-      }
-    });
+
 
     // 监听水印位置变化
     document.querySelectorAll('input[name="wmPos"]').forEach((radio) => {

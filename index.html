@@ -596,8 +596,8 @@
       const customText = watermarkTextInput.value;
       const textSizePercent = Number(textSizeRange.value) / 100;
       const textHeight = customText ? minSide * 0.084 * textSizePercent : 0; // 文字高度比例，受文字大小滑块控制
-      // 给一个负间距，让字体向上提一点，紧贴水印（较之前放大2倍）
-      const textSpacing = customText ? -minSide * 0.16 : 0;
+      // 文字与水印之间的间距
+      const textSpacing = customText ? minSide * 0.02 : 0;
 
       const totalHeight = wmHeight + textSpacing + textHeight;
 

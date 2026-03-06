@@ -633,9 +633,27 @@
       if (customText) {
         ctx.font = `800 ${textHeight}px Outfit, system-ui, sans-serif`;
         ctx.fillStyle = '#1D9BF0';
-        ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.fillText(customText, wmX + wmWidth / 2, wmY + wmHeight + textSpacing);
+
+        let textX;
+        switch (position) {
+          case 'top-left':
+          case 'bottom-left':
+            ctx.textAlign = 'left';
+            textX = wmX;
+            break;
+          case 'top-right':
+          case 'bottom-right':
+            ctx.textAlign = 'right';
+            textX = wmX + wmWidth;
+            break;
+          case 'center':
+          default:
+            ctx.textAlign = 'center';
+            textX = wmX + wmWidth / 2;
+            break;
+        }
+        ctx.fillText(customText, textX, wmY + wmHeight + textSpacing);
       }
 
       ctx.restore();

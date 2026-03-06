@@ -434,6 +434,14 @@
       </div>
 
       <div class="control-item">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <span class="label-text">🔍 水印大小：</span>
+          <span id="sizeLabel" style="color: var(--primary); font-weight: 700; font-size: 16px;">70%</span>
+        </div>
+        <input id="sizeRange" type="range" min="10" max="100" value="70" style="width: 100%; margin-top: 8px;" />
+      </div>
+
+      <div class="control-item">
         <span class="label-text" style="margin-bottom: 4px;">✍️ 水印下方文字：</span>
         <input id="watermarkText" type="text" value="By 陈小萌 & 萌芽社区" placeholder="留空不显示文字"
           style="width: 100%; box-sizing: border-box;" />
@@ -494,6 +502,8 @@
     const fileInput = document.getElementById("fileInput");
     const opacityRange = document.getElementById("opacityRange");
     const opacityLabel = document.getElementById("opacityLabel");
+    const sizeRange = document.getElementById("sizeRange");
+    const sizeLabel = document.getElementById("sizeLabel");
     const watermarkTextInput = document.getElementById("watermarkText");
     const downloadBtn = document.getElementById("downloadBtn");
     const previewWrapper = document.getElementById("previewWrapper");
@@ -555,7 +565,8 @@
 
       // 水印尺寸：相对于短边的一定比例
       const minSide = Math.min(currentImage.width, currentImage.height);
-      const watermarkTargetSize = minSide * 0.70; // 水印占短边约 70% (较之前放大2倍)
+      const sizePercent = Number(sizeRange.value) / 100;
+      const watermarkTargetSize = minSide * sizePercent; // 水印大小由滑块控制
       const ratio = watermarkImg.width / watermarkImg.height;
 
       let wmWidth, wmHeight;
@@ -573,7 +584,7 @@
       const margin = borderWidth + minSide * 0.03; // 距边缘的间距
 
       const customText = watermarkTextInput.value;
-      const textHeight = customText ? minSide * 0.056 : 0; // 文字高度比例（较之前放大2倍）
+      const textHeight = customText ? minSide * 0.084 : 0; // 文字高度比例（1.5倍加粗）
       // 给一个负间距，让字体向上提一点，紧贴水印（较之前放大2倍）
       const textSpacing = customText ? -minSide * 0.16 : 0;
 
@@ -609,8 +620,8 @@
 
       // Draw Text Watermark if exists
       if (customText) {
-        ctx.font = `600 ${textHeight}px Outfit, system-ui, sans-serif`;
-        ctx.fillStyle = '#98c5d2';
+        ctx.font = `800 ${textHeight}px Outfit, system-ui, sans-serif`;
+        ctx.fillStyle = '#1D9BF0';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         ctx.fillText(customText, wmX + wmWidth / 2, wmY + wmHeight + textSpacing);
@@ -642,6 +653,13 @@
 
     opacityRange.addEventListener("input", () => {
       opacityLabel.textContent = `${opacityRange.value}%`;
+      if (currentImage && watermarkLoaded) {
+        drawImageWithWatermark();
+      }
+    });
+
+    sizeRange.addEventListener("input", () => {
+      sizeLabel.textContent = `${sizeRange.value}%`;
       if (currentImage && watermarkLoaded) {
         drawImageWithWatermark();
       }
